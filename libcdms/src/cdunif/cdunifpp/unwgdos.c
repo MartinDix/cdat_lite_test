@@ -75,30 +75,6 @@ int read_wgdos_header(int *header, int ndata,
 
    if (swap == -1)
    {
-      /* see if data is byte swapped with 8 byte words */
-
-#if _INT_SIZE == 8
-      head[0] = header[1];
-#else
-      head[0] = header[2];
-      head[1] = header[3];
-#endif
-      swap_bytes(head,8,1);
-#if _INT_TYPE == _CRAY8
-      ibmi2_to_c8(head, &nx, 1, 0);
-      ibmi2_to_c8(head, &ny, 1, 1);
-#elif _INT_TYPE == _IEEE8
-      ibmi2_to_i8(head, &nx, 1, 0);
-      ibmi2_to_i8(head, &ny, 1, 1);
-#else
-      ibmi2_to_i4(head, &nx, 1, 0);
-      ibmi2_to_i4(head, &ny, 1, 1);
-#endif
-      if (nx*ny == ndata) swap = 8;
-   }
-
-   if (swap == -1)
-   {
       printf("WGDOS data header record mismatch \n");
       return 1;
    }
@@ -144,22 +120,52 @@ int unwgdos(int *datain, int nin, REAL *dataout, int nout, REAL mdi)
 
    swap = -1;
 
+   if (swap == -1)
+   {
+      /* see if data is byte swapped with 8 byte words. Do this test first because it's 
+         the case we expect  */
+
 #if _INT_SIZE == 8
-   head[0] = datain[1];
+      head[0] = datain[1];
 #else
-   head[0] = datain[2];
+      head[0] = datain[2];
+      head[1] = datain[3];
+#endif
+      swap_bytes(head,8,1);
+#if _INT_TYPE == _CRAY8
+      ibmi2_to_c8(head, &ix, 1, 0);
+      ibmi2_to_c8(head, &iy, 1, 1);
+#elif _INT_TYPE == _IEEE8
+      ibmi2_to_i8(head, &ix, 1, 0);
+      ibmi2_to_i8(head, &iy, 1, 1);
+#else
+      ibmi2_to_i4(head, &ix, 1, 0);
+      ibmi2_to_i4(head, &iy, 1, 1);
+#endif
+      if (ix*iy == nout) swap = 8;
+   }
+
+   if (swap == -1)
+   {
+      /* Check for non-swapped case */
+
+#if _INT_SIZE == 8
+     head[0] = datain[1];
+#else
+     head[0] = datain[2];
 #endif
 #if _INT_TYPE == _CRAY8
-   ibmi2_to_c8(head, &ix, 1, 0);
-   ibmi2_to_c8(head, &iy, 1, 1);
+     ibmi2_to_c8(head, &ix, 1, 0);
+     ibmi2_to_c8(head, &iy, 1, 1);
 #elif _INT_TYPE == _IEEE8
-   ibmi2_to_i8(head, &ix, 1, 0);
-   ibmi2_to_i8(head, &iy, 1, 1);
+     ibmi2_to_i8(head, &ix, 1, 0);
+     ibmi2_to_i8(head, &iy, 1, 1);
 #else
-   ibmi2_to_i4(head, &ix, 1, 0);
-   ibmi2_to_i4(head, &iy, 1, 1);
+     ibmi2_to_i4(head, &ix, 1, 0);
+     ibmi2_to_i4(head, &iy, 1, 1);
 #endif
-   if (ix*iy == nout) swap = 0;
+     if (ix*iy == nout) swap = 0;
+   }
 
    if (swap == -1)
    {
@@ -182,30 +188,6 @@ int unwgdos(int *datain, int nin, REAL *dataout, int nout, REAL mdi)
       ibmi2_to_i4(head, &iy, 1, 1);
 #endif
       if (ix*iy == nout) swap = 4;
-   }
-
-   if (swap == -1)
-   {
-      /* see if data is byte swapped with 8 byte words */
-
-#if _INT_SIZE == 8
-      head[0] = datain[1];
-#else
-      head[0] = datain[2];
-      head[1] = datain[3];
-#endif
-      swap_bytes(head,8,1);
-#if _INT_TYPE == _CRAY8
-      ibmi2_to_c8(head, &ix, 1, 0);
-      ibmi2_to_c8(head, &iy, 1, 1);
-#elif _INT_TYPE == _IEEE8
-      ibmi2_to_i8(head, &ix, 1, 0);
-      ibmi2_to_i8(head, &iy, 1, 1);
-#else
-      ibmi2_to_i4(head, &ix, 1, 0);
-      ibmi2_to_i4(head, &iy, 1, 1);
-#endif
-      if (ix*iy == nout) swap = 8;
    }
 
    if (swap == -1)
