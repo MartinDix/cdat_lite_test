@@ -781,7 +781,7 @@ int pp_get_new_fvar(int recno, PPrec *recp, PPfile *ppfile, PPlist *rotmaps,
   CKI(  pp_zaxis_set(zaxis, hdrp)  );
   
   CKP(   taxis=pp_genaxis_new(taxis_type, tdir, heaplist)   );
-  CKI(  pp_taxis_set(taxis, hdrp)  );
+  CKI(  pp_taxis_set(taxis, hdrp, ppfile)  );
   
   /* return to caller */
   *fvarp = fvar;

@@ -267,6 +267,7 @@ struct pp_file {
   int wordsize; /* in bytes */
   PPlandmask *landmask;
   int store_raw_headers; /* boolean */
+  int basetime; /* boolean */
 };
 struct pp_var {
   int firstrecno; /* for fieldvar */
@@ -1103,7 +1104,7 @@ PPlevtype pp_level_type(const PPhdr *);
 int pp_zaxis_set(PPgenaxis *, const PPhdr *);
 int pp_zaxis_add(PPgenaxis *, const PPlevel *, int *, PPlist *);
 
-int pp_taxis_set(PPgenaxis *, const PPhdr *);
+int pp_taxis_set(PPgenaxis *, const PPhdr *, PPfile *);
 int pp_taxis_add(PPgenaxis *, const PPtime *, int *,PPlist *);
 int pp_taxis_is_time_mean(PPgenaxis *);
 

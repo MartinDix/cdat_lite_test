@@ -9,6 +9,10 @@ int pp_set_vars_from_env(PPfile *ppfile)
   if (val && strlen(val) > 0) {
     ppfile->store_raw_headers = 1;
   }
+  val = getenv("PP_BASETIME");
+  if (val && strcmp(val,"model")==0) {
+    ppfile->basetime = 1;
+  }
 }
 
 #endif
