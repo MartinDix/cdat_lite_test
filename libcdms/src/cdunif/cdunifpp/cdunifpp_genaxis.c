@@ -618,7 +618,7 @@ int pp_zaxis_add(PPgenaxis *axis, const PPlevel *lev, int *index_return, PPlist 
   ERRBLKI("pp_zaxis_add");
 }
 
-int pp_taxis_set(PPgenaxis *axis, const PPhdr *hdrp) {
+int pp_taxis_set(PPgenaxis *axis, const PPhdr *hdrp, PPfile *ppfile) {
   PPtaxis *taxis;
 
   checkaxistype(axis,taxis_type);
@@ -630,21 +630,30 @@ int pp_taxis_set(PPgenaxis *axis, const PPhdr *hdrp) {
    *  FIXME (?) for forecast fields could possibly change this to use
    *            the initialisation time (though that is not necessarily desirable)
    */
-
-  if (pp_calendar_type(taxis->type) == model) {
-    taxis->time_orig.year    = hdrp->LBYR; 
-    taxis->time_orig.month   = hdrp->LBMON;
-    taxis->time_orig.day     = hdrp->LBDAT;
-    taxis->time_orig.hour    = hdrp->LBHR;
-    taxis->time_orig.minute  = hdrp->LBMIN;
-    taxis->time_orig.second  = 0;
+  if ( ppfile->basetime ) {
+    /* Use the data time */
+    taxis->time_orig.year = hdrp->LBYRD;
+    taxis->time_orig.month = hdrp->LBMOND;
+    taxis->time_orig.day = hdrp->LBDATD;
+    taxis->time_orig.hour = hdrp->LBHRD;
+    taxis->time_orig.minute = hdrp->LBMIND;
+    taxis->time_orig.second = 0;
   } else {
-    taxis->time_orig.year  = default_year_orig; 
-    taxis->time_orig.month = default_month_orig;
-    taxis->time_orig.day   = default_day_orig;
-    taxis->time_orig.hour  = default_hour_orig;
-    taxis->time_orig.minute= default_minute_orig;
-    taxis->time_orig.second= default_second_orig;
+    if (pp_calendar_type(taxis->type) == model) {
+      taxis->time_orig.year    = hdrp->LBYR; 
+      taxis->time_orig.month   = hdrp->LBMON;
+      taxis->time_orig.day     = hdrp->LBDAT;
+      taxis->time_orig.hour    = hdrp->LBHR;
+      taxis->time_orig.minute  = hdrp->LBMIN;
+      taxis->time_orig.second  = 0;
+    } else {
+      taxis->time_orig.year  = default_year_orig; 
+      taxis->time_orig.month = default_month_orig;
+      taxis->time_orig.day   = default_day_orig;
+      taxis->time_orig.hour  = default_hour_orig;
+      taxis->time_orig.minute= default_minute_orig;
+      taxis->time_orig.second= default_second_orig;
+    }
   }
   return 0;
 

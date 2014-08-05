@@ -29,6 +29,7 @@ CuFile *pp_create_file(const char *controlpath){
   strncpy(file->controlpath, controlpath, CU_MAX_PATH);
   ppfile->landmask = NULL;
   ppfile->store_raw_headers = 0;
+  ppfile->basetime = 0;
 
   /* initialise heap list */
   ppfile->heaplist = pp_list_new(NULL);
