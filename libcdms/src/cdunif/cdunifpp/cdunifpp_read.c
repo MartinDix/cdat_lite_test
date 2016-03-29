@@ -606,7 +606,8 @@ int pp_read_all_headers(CuFile *file)
 	 * start record rather than start address
 	 */
 	if (hdrp->LBBEGIN != 0) {
-	  recp->datapos=(size_t)hdrp->LBBEGIN*ppfile->wordsize; 
+	  /* Extra cast to uint handles files with LBBEGIN up to 2^32 */
+	  recp->datapos=(size_t)((uint)hdrp->LBBEGIN)*ppfile->wordsize; 
 	} else {
 	  recp->datapos = datapos;
 	}
